@@ -21,7 +21,7 @@ int main() {
     int nextId = 101;
 
     while (true) {
-        cout << "\n========== HOSPITAL SYSTEM ==========" << endl;
+        cout << "\n ========== HOSPITAL SYSTEM ==========" << endl;
         cout << "1. Register New Patient" << endl;
         cout << "2. Update Patient Information" << endl;
         cout << "3. View All Registered Patients" << endl;
