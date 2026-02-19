@@ -1,61 +1,66 @@
 #include <iostream>
-#include <vector>
-#include <string>
-
 using namespace std;
 
-//Define the Data Structure
-struct Appointment {
-    int id;
-    string patient;
-    string doctor;
+int main()
+{
+    int appointmentID;
+    string patientName;
+    string doctorName;
     string dateTime;
     string status;
-};
+    int choice;
 
-int main() {
-    //Create the Vector
-    vector<Appointment> list;
+    status = "Not Booked";
 
-    Appointment app1 = {101, "Alice", "Dr. Smith", "10:00 AM", "Booked"};
-    list.push_back(app1);
+    cout << "----- Appointment Module -----" << endl;
+    cout << "1. Book Appointment" << endl;
+    cout << "2. Cancel Appointment" << endl;
+    cout << "3. Reschedule Appointment" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
 
-    Appointment app2 = {102, "Bob", "Dr. Jones", "11:30 AM", "Booked"};
-    list.push_back(app2);
+    if (choice == 1)
+    {
+        cout << "\nEnter Appointment ID: ";
+        cin >> appointmentID;
 
-    cout << "Appointments booked successfully!\n";
+        cout << "Enter Patient Name: ";
+        cin >> patientName;
 
+        cout << "Enter Doctor Name: ";
+        cin >> doctorName;
 
-    // --- RESCHEDULING ---
-    int searchID = 101;
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i].id == searchID) {
-            list[i].dateTime = "02:00 PM";
-            list[i].status = "Rescheduled";
-            cout << "Appointment 101 rescheduled.\n";
-        }
+        cout << "Enter Date & Time: ";
+        cin >> dateTime;
+
+        status = "Booked";
+
+        cout << "\nAppointment Booked Successfully!" << endl;
+    }
+    else if (choice == 2)
+    {
+        status = "Cancelled";
+        cout << "\nAppointment Cancelled!" << endl;
+    }
+    else if (choice == 3)
+    {
+        cout << "\nEnter New Date & Time: ";
+        cin >> dateTime;
+
+        status = "Rescheduled";
+        cout << "Appointment Rescheduled Successfully!" << endl;
+    }
+    else
+    {
+        cout << "\nInvalid Choice!" << endl;
     }
 
-
-    // --- CANCELLING ---
-    // We look through the list to find ID 102 and change the status
-    int cancelID = 102;
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i].id == cancelID) {
-            list[i].status = "Cancelled";
-            cout << "Appointment 102 cancelled.\n";
-        }
-    }
-
-
-    // --- DISPLAYING ALL  ---
-    cout << "\n--- Current System Status ---\n";
-    for (int i = 0; i < list.size(); i++) {
-        cout << "ID: " << list[i].id 
-             << " | Patient: " << list[i].patient 
-             << " | Time: " << list[i].dateTime 
-             << " | Status: " << list[i].status << endl;
-    }
+    cout << "\n----- Appointment Details -----" << endl;
+    cout << "Appointment ID: " << appointmentID << endl;
+    cout << "Patient Name: " << patientName << endl;
+    cout << "Doctor Name: " << doctorName << endl;
+    cout << "Date & Time: " << dateTime << endl;
+    cout << "Status: " << status << endl;
 
     return 0;
 }
