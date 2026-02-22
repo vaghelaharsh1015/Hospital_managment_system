@@ -51,8 +51,8 @@ public:
 
 int main()
 {
-    // // 4. Using Bill in the main function
-    //     bill_module patientBill(150.00, 85.50, 400.00, "2024-02-18 02:00 PM");
+    // 4. Using Bill in the main function
+    // bill_module patientBill(150.00, 85.50, 400.00, "2024-02-20 02:00 PM");
 
     double c, m, r;
     string d;
