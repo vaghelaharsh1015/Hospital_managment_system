@@ -10,8 +10,9 @@ public:
     double consultantFees;
     double medicineCharge;
     double roomCharge;
-    double totalAmount; // Sum of all charges (consultantFees + medicineCharge + roomCharge)
-    string discharge;   //   Date and time when patient was discharged
+    double totalAmount; //  Sum of all charges (consultantFees + medicineCharge + roomCharge)
+    string discharge;   //  Date and time when patient was discharged
+    bool isPaid;        //  To check payment status
 
     // 1. Constructor: Sets values ​​as soon as the object is created
     bill_module(double fees, double medicine, double room, string disch_date)
@@ -20,16 +21,45 @@ public:
         medicineCharge = medicine;
         roomCharge = room;
         discharge = disch_date;
+        isPaid = false; 
         calculateTotal(); // The total will be calculated as soon as the bill is created.
     }
 
-    // 2. Calculate Method: To sum up all three costs
+    // Calculate Method: To sum up all three costs
     void calculateTotal()
     {
         totalAmount = consultantFees + medicineCharge + roomCharge;
     }
 
-    // 3. Print Method: To print the bill neatly on the screen
+    // generateBill() - To prepare bill details
+    void generateBill()
+    {
+        cout << "\n Generating Bill for Date: " << discharge << "..." << endl;
+        calculateTotal(); // Make sure Total is up to date.
+    }
+
+    // processPayment() - To take payment
+    void processPayment()
+    {
+        double amountPaid;
+
+        cout << "\nTotal Amount to pay is: $" << totalAmount << endl;
+
+        cout << "Enter payment amount: $";
+        cin >> amountPaid;
+
+        if (amountPaid >= totalAmount)
+        {
+            isPaid = true;
+            cout << "Payment Successful! Change returned: $" << (amountPaid - totalAmount) << endl;
+        }
+        else
+        {
+            cout << "Insufficient amount! Payment failed." << endl;
+        }
+    }
+
+    // Print Method: To print the bill neatly on the screen
     void printInvoice()
     {
         cout << "\n====================================" << endl;
@@ -45,19 +75,20 @@ public:
         cout << "Room Charge:       $" << roomCharge << endl;
         cout << "------------------------------------" << endl;
         cout << "TOTAL AMOUNT:     $" << totalAmount << endl;
+        cout << "STATUS:           " << (isPaid ? "PAID" : "UNPAID") << endl;
         cout << "====================================" << endl;
     }
 };
 
 int main()
 {
-    // 4. Using Bill in the main function
+    // Using Bill in the main function
     // bill_module patientBill(150.00, 85.50, 400.00, "2024-02-20 02:00 PM");
 
     double c, m, r;
     string d;
 
-    cout << "--- Hospital Biling System ---" << endl;
+    cout << "\n--- Hospital Biling System ---" << endl;
 
     // 1. Taking input from the user
     cout << "Enter Consultant Fees: ";
@@ -76,8 +107,10 @@ int main()
     // 2. Creating an object with user data (Dynamic Allocation)
     bill_module patientBill(c, m, r, d);
 
-    // Print Invoice
-    patientBill.printInvoice();
+    patientBill.generateBill();       // Bill will be generated.
+    patientBill.printInvoice();       // Bill before payment
+    patientBill.processPayment();     // Payment will be processed.
+    patientBill.printInvoice();       // Post-payment bill (with PAID status)
 
     return 0;
 }
