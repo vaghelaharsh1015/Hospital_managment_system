@@ -1,60 +1,136 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
-//Define the Data Structure
-struct Appointment {
+// ---------------- Patient Class ----------------
+class Patient {
+public:
     int id;
-    string patient;
-    string doctor;
+    string name;
+};
+
+// ---------------- Doctor Class ----------------
+class Doctor {
+public:
+    int id;
+    string name;
+};
+
+// ---------------- Appointment Class ----------------
+class Appointment {
+public:
+    int appointmentID;
+    Patient patient;
+    Doctor doctor;
     string dateTime;
     string status;
+
+    void bookAppointment() {
+        cout << "Enter Appointment ID: ";
+        cin >> appointmentID;
+
+        cout << "Enter Patient ID: ";
+        cin >> patient.id;
+        cout << "Enter Patient Name: ";
+        cin >> patient.name;
+
+        cout << "Enter Doctor ID: ";
+        cin >> doctor.id;
+        cout << "Enter Doctor Name: ";
+        cin >> doctor.name;
+
+        cin.ignore();
+        cout << "Enter Date & Time: ";
+        getline(cin, dateTime);
+
+        status = "Scheduled";
+        cout << "Appointment Booked Successfully!" << endl;
+    }
+
+    void showAppointment() {
+        cout << "Appointment ID: " << appointmentID << endl;
+        cout << "Patient: " << patient.name << endl;
+        cout << "Doctor: " << doctor.name << endl;
+        cout << "Date & Time: " << dateTime << endl;
+        cout << "Status: " << status << endl;
+        cout << "---------------------------" << endl;
+    }
 };
 
 int main() {
-    //Create the Vector
-    vector<Appointment> list;
+    queue<Appointment> appointmentQueue;   // For booking
+    stack<Appointment> cancelledStack;     // For cancelled appointments
 
-    Appointment app1 = {101, "Alice", "Dr. Smith", "10:00 AM", "Booked"};
-    list.push_back(app1);
+    int choice;
 
-    Appointment app2 = {102, "Bob", "Dr. Jones", "11:30 AM", "Booked"};
-    list.push_back(app2);
+    while (true) {
+        cout << "\n===== APPOINTMENT SYSTEM =====" << endl;
+        cout << "1. Book Appointment" << endl;
+        cout << "2. Cancel Appointment" << endl;
+        cout << "3. Reschedule Appointment" << endl;
+        cout << "4. View All Appointments" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter choice: ";
+        cin >> choice;
 
-    cout << "Appointments booked successfully!\n";
-
-
-    // --- RESCHEDULING ---
-    int searchID = 101;
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i].id == searchID) {
-            list[i].dateTime = "02:00 PM";
-            list[i].status = "Rescheduled";
-            cout << "Appointment 101 rescheduled.\n";
+        if (choice == 1) {
+            Appointment a;
+            a.bookAppointment();
+            appointmentQueue.push(a);
         }
-    }
 
-
-    // --- CANCELLING ---
-    // We look through the list to find ID 102 and change the status
-    int cancelID = 102;
-    for (int i = 0; i < list.size(); i++) {
-        if (list[i].id == cancelID) {
-            list[i].status = "Cancelled";
-            cout << "Appointment 102 cancelled.\n";
+        else if (choice == 2) {
+            if (!appointmentQueue.empty()) {
+                Appointment a = appointmentQueue.front();
+                appointmentQueue.pop();
+                a.status = "Cancelled";
+                cancelledStack.push(a);
+                cout << "Appointment Cancelled!" << endl;
+            } else {
+                cout << "No Appointments to Cancel!" << endl;
+            }
         }
-    }
 
+        else if (choice == 3) {
+            if (!appointmentQueue.empty()) {
+                Appointment a = appointmentQueue.front();
+                appointmentQueue.pop();
 
-    // --- DISPLAYING ALL  ---
-    cout << "\n--- Current System Status ---\n";
-    for (int i = 0; i < list.size(); i++) {
-        cout << "ID: " << list[i].id 
-             << " | Patient: " << list[i].patient 
-             << " | Time: " << list[i].dateTime 
-             << " | Status: " << list[i].status << endl;
+                cin.ignore();
+                cout << "Enter New Date & Time: ";
+                getline(cin, a.dateTime);
+                a.status = "Rescheduled";
+
+                appointmentQueue.push(a);
+                cout << "Appointment Rescheduled!" << endl;
+            } else {
+                cout << "No Appointment Found!" << endl;
+            }
+        }
+
+        else if (choice == 4) {
+            if (appointmentQueue.empty()) {
+                cout << "No Appointments Available!" << endl;
+            } else {
+                queue<Appointment> temp = appointmentQueue;
+                while (!temp.empty()) {
+                    temp.front().showAppointment();
+                    temp.pop();
+                }
+            }
+        }
+
+        else if (choice == 5) {
+            cout << "System Closed. Goodbye!" << endl;
+            break;
+        }
+
+        else {
+            cout << "Invalid Choice!" << endl;
+        }
     }
 
     return 0;
