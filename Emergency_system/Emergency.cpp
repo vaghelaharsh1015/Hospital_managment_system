@@ -4,7 +4,7 @@
 
 using namespace std;
 
-/* -------------------- Patient Class -------------------- */
+// Patient Class
 class Patient {
 public:
     int id;
@@ -20,14 +20,14 @@ public:
     }
 };
 
-/* -------------------- EmergencyPatient Class -------------------- */
-/*
-severityLevel:
-1 = Critical
-2 = High
-3 = Moderate
-4 = Low
-*/
+//EmergencyPatient Class
+
+// severityLevel:
+// 1 = Critical
+// 2 = High
+// 3 = Moderate
+// 4 = Low
+
 class EmergencyPatient : public Patient {
 public:
     int severityLevel;
@@ -46,10 +46,10 @@ public:
     }
 };
 
-/* -------------------- Queue for Emergency Patients -------------------- */
+// Queue for Emergency Patients
 queue<EmergencyPatient> emergencyQueue;
 
-/* -------------------- Register Emergency Patient -------------------- */
+// Register Emergency Patient 
 void registerEmergencyPatient() {
     int id, age, severity;
     string name, arrival, condition;
@@ -67,7 +67,7 @@ void registerEmergencyPatient() {
     cout << "Enter Severity Level (1-Critical to 4-Low): ";
     cin >> severity;
 
-    cin.ignore(); // clear buffer
+    cin.ignore(); 
     cout << "Enter Arrival Time: ";
     getline(cin, arrival);
 
@@ -80,7 +80,7 @@ void registerEmergencyPatient() {
     cout << "Emergency patient registered successfully!\n";
 }
 
-/* -------------------- Serve Emergency Patient -------------------- */
+// Serve Emergency Patient 
 void serveEmergencyPatient() {
     if (emergencyQueue.empty()) {
         cout << "\nNo emergency patients to serve.\n";
@@ -90,6 +90,8 @@ void serveEmergencyPatient() {
     EmergencyPatient ep = emergencyQueue.front();
     emergencyQueue.pop();
 
+    string doctorName, department;
+
     cout << "\n--- Serving Emergency Patient ---\n";
     cout << "ID: " << ep.id << endl;
     cout << "Name: " << ep.name << endl;
@@ -97,9 +99,22 @@ void serveEmergencyPatient() {
     cout << "Condition: " << ep.condition << endl;
     cout << "Severity Level: " << ep.severityLevel << endl;
     cout << "Arrival Time: " << ep.arrivalTime << endl;
+
+    cin.ignore(); // clear buffer
+    cout << "\nAssign Doctor Name: ";
+    getline(cin, doctorName);
+
+    cout << "Assign Department: ";
+    getline(cin, department);
+
+    cout << "\n--- Doctor Assigned Successfully ---\n";
+    cout << "Doctor Name: " << doctorName << endl;
+    cout << "Department: " << department << endl;
+    cout << "Patient is under treatment.\n";
 }
 
-/* -------------------- Main Function -------------------- */
+// Main Function
+
 int main() {
     int choice;
 

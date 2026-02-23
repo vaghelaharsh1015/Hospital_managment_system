@@ -5,21 +5,21 @@
 
 using namespace std;
 
-// ---------------- Patient Class ----------------
+// Patient Class 
 class Patient {
 public:
     int id;
     string name;
 };
 
-// ---------------- Doctor Class ----------------
+// Doctor Class 
 class Doctor {
 public:
     int id;
     string name;
 };
 
-// ---------------- Appointment Class ----------------
+// Appointment Class 
 class Appointment {
 public:
     int appointmentID;
