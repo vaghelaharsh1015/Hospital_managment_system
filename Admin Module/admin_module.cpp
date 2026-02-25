@@ -64,21 +64,6 @@ public:
         // cout << "Last Login: " << lastLogin << endl;
         cout << "------------------------------\n"<< endl;
     }
-
-    void manageStaff()
-    {
-        cout << "[Admin]  Handle non-doctor staff (nurses, receptionists) " << endl;
-    }
-
-    void handleEmergency()
-    {
-        cout << " [Admin] Prioritize emergency patients, allocate resources " << endl;
-    }
-
-    void updateHospitalSettings()
-    {
-        cout << "[Admin] Configure fees, room charges, hospital info " << endl;
-    }
 };
 
 int main()
@@ -90,7 +75,7 @@ int main()
     cout << "==== ADMIN REGISTRATION ====" << endl;
 
     cout << "Enter Admin ID: ";
-    cin.ignore() >> inputId;
+    cin>> inputId;
 
     // We use cin.ignore() here to clear the "Enter" key press from the buffer
     // before using getline(), otherwise it skips the next input.

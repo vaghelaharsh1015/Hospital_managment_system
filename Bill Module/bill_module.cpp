@@ -1,28 +1,32 @@
 #include <iostream>
 #include <string>
-#include <iomanip> // (input/output manipulators) For formatting currency
+#include <iomanip> // For formatting currency
 
 using namespace std;
 
 class bill_module
 {
 public:
+    string patientId;   // Patient ID from registration
+    string patientName; // Patient Name
     double consultantFees;
     double medicineCharge;
     double roomCharge;
-    double totalAmount; //  Sum of all charges (consultantFees + medicineCharge + roomCharge)
-    string discharge;   //  Date and time when patient was discharged
-    bool isPaid;        //  To check payment status
+    double totalAmount; // Sum of all charges
+    string discharge;   // Date and time when patient was discharged
+    bool isPaid;        // To check payment status
 
-    // 1. Constructor: Sets values ​​as soon as the object is created
-    bill_module(double fees, double medicine, double room, string disch_date)
+    // Constructor: Sets values as soon as the object is created
+    bill_module(string p_id, string p_name, double fees, double medicine, double room, string disch_date)
     {
+        patientId = p_id;
+        patientName = p_name;
         consultantFees = fees;
         medicineCharge = medicine;
         roomCharge = room;
         discharge = disch_date;
-        isPaid = false; 
-        calculateTotal(); // The total will be calculated as soon as the bill is created.
+        isPaid = false;
+        calculateTotal(); // Calculate the total as soon as the bill is created
     }
 
     // Calculate Method: To sum up all three costs
@@ -34,8 +38,8 @@ public:
     // generateBill() - To prepare bill details
     void generateBill()
     {
-        cout << "\n Generating Bill for Date: " << discharge << "..." << endl;
-        calculateTotal(); // Make sure Total is up to date.
+        cout << "\n Generating Bill for Patient: " << patientName << " (ID: " << patientId << ")..." << endl;
+        calculateTotal();
     }
 
     // processPayment() - To take payment
@@ -65,32 +69,40 @@ public:
         cout << "\n====================================" << endl;
         cout << "          HOSPITAL INVOICE          " << endl;
         cout << "====================================" << endl;
-        cout << "Discharge Date: " << discharge << endl;
+        cout << "Patient ID:       " << patientId << endl;
+        cout << "Patient Name:     " << patientName << endl;
+        cout << "Discharge Date:   " << discharge << endl;
+        cout << "------------------------------------" << endl;
 
-        // fixed and setprecision(2) will make the price look like $150.00
+        // fixed and setprecision(2) formats the price to two decimal places
         cout << fixed << setprecision(2);
 
         cout << "Consultant Fees:   $" << consultantFees << endl;
         cout << "Medicine Charge:   $" << medicineCharge << endl;
         cout << "Room Charge:       $" << roomCharge << endl;
         cout << "------------------------------------" << endl;
-        cout << "TOTAL AMOUNT:     $" << totalAmount << endl;
-        cout << "STATUS:           " << (isPaid ? "PAID" : "UNPAID") << endl;
+        cout << "TOTAL AMOUNT:      $" << totalAmount << endl;
+        cout << "STATUS:            " << (isPaid ? "PAID" : "UNPAID") << endl;
         cout << "====================================" << endl;
     }
 };
 
 int main()
 {
-    // Using Bill in the main function
-    // bill_module patientBill(150.00, 85.50, 400.00, "2024-02-20 02:00 PM");
-
+    string p_id, p_name, d;
     double c, m, r;
-    string d;
 
-    cout << "\n--- Hospital Biling System ---" << endl;
+    cout << "\n--- Hospital Billing System ---" << endl;
 
-    // 1. Taking input from the user
+    // 1. Taking Patient ID and Name first
+    cout << "Enter Patient ID: ";
+    cin >> p_id;
+
+    cout << "Enter Patient Name: ";
+    cin.ignore(); // Clear the buffer before using getline
+    getline(cin, p_name);
+
+    // 2. Taking billing details
     cout << "Enter Consultant Fees: ";
     cin >> c;
 
@@ -100,17 +112,17 @@ int main()
     cout << "Enter Room Charges: ";
     cin >> r;
 
-    cout << "Enter Discharge Date_Time: " << endl; // (e.g., 18-02-2024 02:00 PM)
-    cin.ignore();                                  //  To clear the buffer before taking the string
-    getline(cin, d);                               //  To read the entire line (with space)
+    cout << "Enter Discharge Date_Time (e.g., 20-02-2024 02:00 PM): ";
+    cin.ignore();
+    getline(cin, d); // FIXED: Added this line to actually read the date
 
-    // 2. Creating an object with user data (Dynamic Allocation)
-    bill_module patientBill(c, m, r, d);
+    // 3. Creating the object with all the data
+    bill_module patientBill(p_id, p_name, c, m, r, d);
 
-    patientBill.generateBill();       // Bill will be generated.
-    patientBill.printInvoice();       // Bill before payment
-    patientBill.processPayment();     // Payment will be processed.
-    patientBill.printInvoice();       // Post-payment bill (with PAID status)
+    patientBill.generateBill();
+    patientBill.printInvoice();
+    patientBill.processPayment();
+    patientBill.printInvoice();
 
     return 0;
 }
