@@ -14,7 +14,7 @@ public:
     bool available;
     Doctor *next;
 
-    Doctor(int id, string n, string spec, string dept) {
+    Doctor(int id, string n, string spec, string dept){
         doctorID = id;
         name = n;
         specialization = spec;
@@ -35,7 +35,7 @@ public:
     }
 
     // add doctor function  
-    void addDoctor(int id, string n, string spec, string dept) {
+    void addDoctor(int id, string n, string spec, string dept){
         Doctor *newDoc = new Doctor(id, n, spec, dept);
         if (docHead == NULL) {
             docHead = newDoc;
