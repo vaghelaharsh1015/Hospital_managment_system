@@ -1,2 +1,1 @@
-
-                    cout << "Enter new contact: "; cin >> hospital[i].contact;
+cout << "Enter new contact: "; cin >> hospital[i].contact;
