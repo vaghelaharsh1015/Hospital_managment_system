@@ -1,116 +1,287 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
+#include <stack>
+#include <iomanip>
 
 using namespace std;
 
-class admin_module
-{
-private:
-    int adminId;
+// DATA STRUCTURES 
+
+struct Patient {
+    int id;
     string name;
-    string email;
-    string password;
-    string role;      // Admin permission level (e.g., "SuperAdmin", "BillingAdmin","ReceptionAdmin")
-    string lastLogin; //  DateTime lastLogin — Last time admin logged into the system
+    int age;
+    string contact;
+    string address;
+    string bloodGroup;
+    string patientType; 
+    double amountDue = 0.0;
+    bool isPaid = false;
+};
 
-public:
-    // Constructor to set the data dynamically based on user input
-    admin_module(int id, string n, string e, string pass, string r)
-    {
-        adminId = id;
-        name = n;
-        email = e;
-        password = pass;
-        role = r;
-    }
+struct Doctor {
+    int doctorID;
+    string name;
+    string specialization;
+    string department;
+    bool available = true;
+};
 
-    void managePatients()
-    {
-        cout << "[Admin] Patient module opened. New patients will be registered here." << endl;
-    }
+struct Appointment {
+    int appointmentID;
+    string patientName;
+    string doctorName;
+    string dateTime;
+    string status; 
+};
 
-    void manageDoctors()
-    {
-        cout << "[Admin] Doctor module opened. Doctor information can be added here." << endl;
-    }
+struct EmergencyPatient {
+    int id;
+    string name;
+    int severity;
+    string condition;
 
-    void manageAppointments()
-    {
-        cout << "[Admin] Checking the appointment list..." << endl;
-    }
-
-    void manageBilling()
-    {
-        cout << "[Admin] Billing Module: The final bill of the patient will be generated here." << endl;
-    }
-
-    void generateReports()
-    {
-        cout << "[Admin] Generating hospital revenue and patient reports." << endl;
-    }
-
-    void assignDepartment()
-    {
-        cout << "[Admin] Assign doctors to departments " << endl;
-    }
-
-    void viewDashboard()
-    {
-        cout << "\n----- Hospital Dashboard -----" << endl;
-        cout << "Admin ID: " << adminId << endl;
-        cout << "Admin Name: " << name << endl; 
-        cout << "Role: " << role << endl;
-        // cout << "Last Login: " << lastLogin << endl;
-        cout << "------------------------------\n"<< endl;
-    }
-
-    void manageStaff()
-    {
-        cout << "[Admin]  Handle non-doctor staff (nurses, receptionists) " << endl;
-    }
-
-    void handleEmergency()
-    {
-        cout << " [Admin] Prioritize emergency patients, allocate resources " << endl;
-    }
-
-    void updateHospitalSettings()
-    {
-        cout << "[Admin] Configure fees, room charges, hospital info " << endl;
+    bool operator<(const EmergencyPatient& other) const {
+        return severity < other.severity; 
     }
 };
 
-int main()
-{
+//  ADMIN MODULE 
 
-    int inputId;
-    string inputName, inputEmail, inputPassword, inputRole;
+class AdminModule {
+private:
+    vector<Patient> patients;           
+    vector<Doctor> doctors;             
+    queue<Appointment> apptQueue;       
+    stack<Appointment> cancelledStack;  
+    priority_queue<EmergencyPatient> emgQueue;   
+    
+    int nextPatientId = 101;
 
-    cout << "==== ADMIN REGISTRATION ====" << endl;
+public:
+    AdminModule() {
+        doctors.push_back({2001, "Dr. Rajesh Vaghela", "Neurologist", "Neurology"});
+        doctors.push_back({2002, "Dr. Sarah Williams", "Cardiologist", "Cardiology"});
+    }
 
-    cout << "Enter Admin ID: ";
-    cin.ignore() >> inputId;
+    //  PATIENT MANAGEMENT 
+    void managePatients() {
+        int choice;
+        cout << "\n--- PATIENT MANAGEMENT ---\n";
+        cout << "1. Register Patient\n2. Update Details\n3. View Patients\nChoice: ";
+        cin >> choice;
 
-    // We use cin.ignore() here to clear the "Enter" key press from the buffer
-    // before using getline(), otherwise it skips the next input.
-    cin.ignore();
+        if (choice == 1) {
+            Patient p;
+            p.id = nextPatientId++;
+            cin.ignore();
+            cout << "Enter Name: "; getline(cin, p.name);
+            cout << "Enter Age: "; cin >> p.age;
+            cout << "Enter Contact: "; cin >> p.contact;
+            cin.ignore();
+            cout << "Enter Address: "; getline(cin, p.address);
+            cout << "Enter Blood Group: "; cin >> p.bloodGroup;
+            p.patientType = "Regular";
+            patients.push_back(p);
+            cout << "SUCCESS: Registered with ID: " << p.id << endl;
+        }
+        else if (choice == 2) {
+            int sid; 
+            cout << "Enter Patient ID: "; 
+            cin >> sid;
+            bool found = false;
 
-    cout << "Enter Full Name: ";
-    getline(cin, inputName);
+            for (auto &p : patients) {
+                if (p.id == sid) {
+                    found = true;
+                    cout << "1.Name 2.Contact 3.Address 4.Age\nChoice: ";
+                    int upd; cin >> upd;
+                    cin.ignore();
+                    if (upd == 1) { cout << "New Name: "; getline(cin, p.name); }
+                    else if (upd == 2) { cout << "New Contact: "; cin >> p.contact; }
+                    else if (upd == 3) { cout << "New Address: "; getline(cin, p.address); }
+                    else if (upd == 4) { cout << "New Age: "; cin >> p.age; }
+                    cout << "Updated Successfully!\n";
+                    break;
+                }
+            }
+            if (!found) cout << "Patient Not Found!\n";
+        }
+        else if (choice == 3) {
+            cout << "\nID\tName\tAge\tBlood\tPaid\n";
+            for (const auto& p : patients) {
+                cout << p.id << "\t" << p.name << "\t" << p.age 
+                     << "\t" << p.bloodGroup << "\t"
+                     << (p.isPaid ? "Yes" : "No") << endl;
+            }
+        }
+    }
 
-    cout << "Enter Email-Id: ";
-    getline(cin, inputEmail);
+    // DOCTOR MANAGEMENT 
+    void manageDoctors() {
+        int choice;
+        cout << "\n--- DOCTOR MANAGEMENT ---\n";
+        cout << "1.Add Doctor\n2.View Doctors\nChoice: ";
+        cin >> choice;
 
-    cout << "Enter Password: ";
-    getline(cin, inputPassword);
+        if (choice == 1) {
+            Doctor d;
+            cout << "Doctor ID: "; cin >> d.doctorID;
+            cin.ignore();
+            cout << "Name: "; getline(cin, d.name);
+            cout << "Specialization: "; getline(cin, d.specialization);
+            cout << "Department: "; getline(cin, d.department);
+            doctors.push_back(d);
+            cout << "Doctor Added Successfully!\n";
+        } 
+        else {
+            for (const auto& d : doctors) {
+                cout << "ID: " << d.doctorID 
+                     << " | " << d.name 
+                     << " | " << d.specialization 
+                     << " | " << d.department << endl;
+            }
+        }
+    }
 
-    cout << "Enter Role: ";
-    getline(cin, inputRole);
+    //  APPOINTMENTS 
+    void manageAppointments() {
+        int choice;
+        cout << "\n--- APPOINTMENTS ---\n";
+        cout << "1.Book\n2.Cancel\n3.Reschedule\nChoice: ";
+        cin >> choice;
 
-    // Now we create the Admin object using the variables we just collected
-    admin_module myAdmin(inputId, inputName, inputEmail, inputPassword, inputRole);
+        if (choice == 1) {
+            Appointment a;
+            cout << "Appt ID: "; cin >> a.appointmentID;
+            cin.ignore();
+            cout << "Patient Name: "; getline(cin, a.patientName);
+            cout << "Doctor Name: "; getline(cin, a.doctorName);
+            cout << "Date/Time: "; getline(cin, a.dateTime);
+            a.status = "Scheduled";
+            apptQueue.push(a);
+            cout << "Appointment Booked!\n";
+        }
+        else if (choice == 2 && !apptQueue.empty()) {
+            Appointment a = apptQueue.front();
+            apptQueue.pop();
+            a.status = "Cancelled";
+            cancelledStack.push(a);
+            cout << "Appointment Cancelled!\n";
+        }
+        else if (choice == 3 && !apptQueue.empty()) {
+            cin.ignore();
+            cout << "New Date/Time: ";
+            getline(cin, apptQueue.front().dateTime);
+            apptQueue.front().status = "Rescheduled";
+            cout << "Appointment Rescheduled!\n";
+        }
+    }
 
-    // Views the dashboard to prove the dynamic data was saved
-    myAdmin.viewDashboard();
+    //  BILLING 
+    void manageBilling() {
+        int id;
+        cout << "Enter Patient ID: ";
+        cin >> id;
+
+        for (auto &p : patients) {
+            if (p.id == id) {
+                double f, m, r;
+                cout << "Doctor Fees: "; cin >> f;
+                cout << "Medicine Cost: "; cin >> m;
+                cout << "Room Charges: "; cin >> r;
+
+                p.amountDue = f + m + r;
+                cout << "Total Amount: $" << p.amountDue << endl;
+
+                double paid;
+                cout << "Enter Payment: ";
+                cin >> paid;
+
+                if (paid >= p.amountDue) {
+                    p.isPaid = true;
+                    cout << "Payment Successful! Change: $" 
+                         << (paid - p.amountDue) << endl;
+                } else {
+                    cout << "Insufficient Payment!\n";
+                }
+                return;
+            }
+        }
+        cout << "Patient Not Found!\n";
+    }
+
+    //  EMERGENCY 
+    void manageEmergency() {
+        int choice;
+        cout << "\n--- EMERGENCY ---\n";
+        cout << "1.Register\n2.Serve Next\nChoice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            EmergencyPatient ep;
+            cout << "ID: "; cin >> ep.id;
+            cin.ignore();
+            cout << "Name: "; getline(cin, ep.name);
+            cout << "Severity (1-4): "; cin >> ep.severity;
+            cin.ignore();
+            cout << "Condition: "; getline(cin, ep.condition);
+            emgQueue.push(ep);
+            cout << "Emergency Patient Added!\n";
+        }
+        else if (choice == 2 && !emgQueue.empty()) {
+            cout << "Serving: " << emgQueue.top().name << endl;
+            emgQueue.pop();
+        }
+        else {
+            cout << "No Emergency Patients!\n";
+        }
+    }
+
+    //  REPORT 
+    void generateReport() {
+        cout << "\n-*-------- HOSPITAL REPORT ----------*-\n";
+        cout << "Total Patients: " << patients.size() << endl;
+        cout << "Total Doctors: " << doctors.size() << endl;
+        cout << "Scheduled Appointments: " << apptQueue.size() << endl;
+        cout << "Cancelled Appointments: " << cancelledStack.size() << endl;
+        cout << "Emergency Waiting: " << emgQueue.size() << endl;
+        cout << "*********************************************\n";
+    }
+};
+
+//  MAIN FUNCTION 
+
+int main() {
+    AdminModule admin;
+    int choice;
+
+    do {
+        cout << "\n*=*=*=*=*=*  HOSPITAL MANAGEMENT SYSTEM =*=*=*=*=*=*=\n";
+        cout << "1.Patient Management\n";
+        cout << "2.Doctor Management\n";
+        cout << "3.Appointments\n";
+        cout << "4.Billing\n";
+        cout << "5.Emergency\n";
+        cout << "6.Generate Report\n";
+        cout << "0.Exit\n";
+        cout << "Choice: ";
+        cin >> choice;
+
+        switch(choice) {
+            case 1: admin.managePatients(); break;
+            case 2: admin.manageDoctors(); break;
+            case 3: admin.manageAppointments(); break;
+            case 4: admin.manageBilling(); break;
+            case 5: admin.manageEmergency(); break;
+            case 6: admin.generateReport(); break;
+        }
+
+    } while(choice != 0);
+
+    cout << "Thank You!\n";
+    return 0;
 }
