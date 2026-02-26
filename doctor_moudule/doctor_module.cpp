@@ -1,4 +1,3 @@
-// 
 
 #include <iostream>
 #include <string>
@@ -19,7 +18,11 @@ struct Patient {
     string history; 
 };
 
+<<<<<<< HEAD
 //  2. Doctor Class 
+=======
+// 2. Doctor Class 
+>>>>>>> f07f539638e932e8fb5e55ef6385443770b672e4
 class Doctor {
 public:
     int doctorID;
@@ -39,11 +42,15 @@ public:
     }
 };
 
+<<<<<<< HEAD
 // 3. Main Hospital Class to manage both 
+=======
+//  3. Main Hospital Class to manage both 
+>>>>>>> f07f539638e932e8fb5e55ef6385443770b672e4
 class Hospital {
 private:
-    vector<Patient> patients; // Patient store karva mate vector
-    Doctor *docHead;          // Doctor store karva mate Linked List
+    vector<Patient> patients;
+    Doctor *docHead;         
     int nextPatientId;
 
 public:
@@ -52,7 +59,11 @@ public:
         nextPatientId = 101;
     }
 
+<<<<<<< HEAD
     // register Patient Functions 
+=======
+    // thise is Patient Functions 
+>>>>>>> f07f539638e932e8fb5e55ef6385443770b672e4
     void registerPatient() {
         Patient p;
         p.id = nextPatientId++;
@@ -74,7 +85,11 @@ public:
         }
     }
 
+<<<<<<< HEAD
     // add doctor function  
+=======
+    // thise isDoctor Functions 
+>>>>>>> f07f539638e932e8fb5e55ef6385443770b672e4
     void addDoctor(int id, string n, string spec, string dept) {
         Doctor *newDoc = new Doctor(id, n, spec, dept);
         if (docHead == NULL) {
@@ -103,6 +118,10 @@ int main() {
     Hospital myHospital;
     int choice;
 
+<<<<<<< HEAD
+=======
+    // thise is doctor name and that informantion 
+>>>>>>> f07f539638e932e8fb5e55ef6385443770b672e4
     myHospital.addDoctor(2001, "Dr. Rajesh Vaghela", "Neurologist", "Neurology");
     myHospital.addDoctor(2002, "Dr. Sarah Williams", "Cardiologist", "Cardiology");
 
