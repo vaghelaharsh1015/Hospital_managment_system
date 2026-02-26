@@ -5,22 +5,25 @@
 
 using namespace std;
 
-// Patient Class 
-class Patient {
+// Patient Class
+class Patient
+{
 public:
     int id;
     string name;
 };
 
-// Doctor Class 
-class Doctor {
+// Doctor Class
+class Doctor
+{
 public:
     int id;
     string name;
 };
 
-// Appointment Class 
-class Appointment {
+// Appointment Class
+class Appointment
+{
 public:
     int appointmentID;
     Patient patient;
@@ -28,7 +31,8 @@ public:
     string dateTime;
     string status;
 
-    void bookAppointment() {
+    void bookAppointment()
+    {
         cout << "Enter Appointment ID: ";
         cin >> appointmentID;
 
@@ -50,7 +54,49 @@ public:
         cout << "Appointment Booked Successfully!" << endl;
     }
 
-    void showAppointment() {
+    void cancelAppointmentById(queue<Appointment> &appointmentQueue,
+                               stack<Appointment> &cancelledStack)
+    {
+        if (appointmentQueue.empty())
+        {
+            cout << "No Appointments to Cancel!" << endl;
+            return;
+        }
+
+        int id;
+        cout << "Enter Appointment ID to Cancel: ";
+        cin >> id;
+
+        queue<Appointment> temp;
+        bool found = false;
+
+        while (!appointmentQueue.empty())
+        {
+            Appointment a = appointmentQueue.front();
+            appointmentQueue.pop();
+
+            if (a.appointmentID == id && found == false)
+            {
+                a.status = "Cancelled";
+                cancelledStack.push(a);
+                found = true;
+            }
+            else
+            {
+                temp.push(a);
+            }
+        }
+
+        appointmentQueue = temp;
+
+        if (found)
+            cout << "Appointment Cancelled Successfully!" << endl;
+        else
+            cout << "Appointment ID not found!" << endl;
+    }
+
+    void showAppointment()
+    {
         cout << "Appointment ID: " << appointmentID << endl;
         cout << "Patient: " << patient.name << endl;
         cout << "Doctor: " << doctor.name << endl;
@@ -60,13 +106,15 @@ public:
     }
 };
 
-int main() {
-    queue<Appointment> appointmentQueue;   // For booking
-    stack<Appointment> cancelledStack;     // For cancelled appointments
+int main()
+{
+    queue<Appointment> appointmentQueue; // For booking
+    stack<Appointment> cancelledStack;   // For cancelled appointments
 
     int choice;
 
-    while (true) {
+    while (true)
+    {
         cout << "\n===== APPOINTMENT SYSTEM =====" << endl;
         cout << "1. Book Appointment" << endl;
         cout << "2. Cancel Appointment" << endl;
@@ -76,26 +124,40 @@ int main() {
         cout << "Enter choice: ";
         cin >> choice;
 
-        if (choice == 1) {
+        if (choice == 1)
+        {
             Appointment a;
             a.bookAppointment();
             appointmentQueue.push(a);
         }
 
-        else if (choice == 2) {
-            if (!appointmentQueue.empty()) {
-                Appointment a = appointmentQueue.front();
-                appointmentQueue.pop();
-                a.status = "Cancelled";
-                cancelledStack.push(a);
-                cout << "Appointment Cancelled!" << endl;
-            } else {
-                cout << "No Appointments to Cancel!" << endl;
-            }
+        // else if (choice == 2)
+        // {
+        //     if (!appointmentQueue.empty())
+        //     {
+        //         Appointment a = appointmentQueue.front();
+        //         appointmentQueue.pop();
+        //         a.status = "Cancelled";
+        //         cancelledStack.push(a);
+        //         cout << "Appointment Cancelled!" << endl;
+        //     }
+        //     else
+        //     {
+        //         cout << "No Appointments to Cancel!" << endl;
+        //     }
+        // }
+
+        else if (choice == 2)
+        {
+
+            Appointment a;
+            a.cancelAppointmentById(appointmentQueue, cancelledStack);
         }
 
-        else if (choice == 3) {
-            if (!appointmentQueue.empty()) {
+        else if (choice == 3)
+        {
+            if (!appointmentQueue.empty())
+            {
                 Appointment a = appointmentQueue.front();
                 appointmentQueue.pop();
 
@@ -106,29 +168,38 @@ int main() {
 
                 appointmentQueue.push(a);
                 cout << "Appointment Rescheduled!" << endl;
-            } else {
+            }
+            else
+            {
                 cout << "No Appointment Found!" << endl;
             }
         }
 
-        else if (choice == 4) {
-            if (appointmentQueue.empty()) {
+        else if (choice == 4)
+        {
+            if (appointmentQueue.empty())
+            {
                 cout << "No Appointments Available!" << endl;
-            } else {
+            }
+            else
+            {
                 queue<Appointment> temp = appointmentQueue;
-                while (!temp.empty()) {
+                while (!temp.empty())
+                {
                     temp.front().showAppointment();
                     temp.pop();
                 }
             }
         }
 
-        else if (choice == 5) {
+        else if (choice == 5)
+        {
             cout << "System Closed. Goodbye!" << endl;
             break;
         }
 
-        else {
+        else
+        {
             cout << "Invalid Choice!" << endl;
         }
     }
